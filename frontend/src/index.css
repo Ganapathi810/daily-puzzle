@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+:root {
+  --bg-primary: #02101f;
+  --bg-surface: #244c7d;
+}
+
+body {
+  background: var(--bg-primary);
+  font-family: 'Poppins', sans-serif;
+}
