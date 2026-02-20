@@ -10,8 +10,12 @@ function App() {
   useAutoSync()
 
   useEffect(() => {
-    dispatch(fetchUser());
-  }, [dispatch]);
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      dispatch(fetchUser());
+    }
+  }, []);
 
   return <AppRouter />;
 }

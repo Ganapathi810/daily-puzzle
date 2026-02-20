@@ -62,13 +62,6 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setToken: (_, action) => {
-      localStorage.setItem("token", action.payload);
-      // Optionally clear guest flags if any
-      localStorage.removeItem("authMode");
-      localStorage.removeItem("guestId");
-      localStorage.removeItem("guestCreatedAt");
-    },
     logout(state) {
       state.user = null;
       state.isGuest = false;
@@ -98,5 +91,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, setToken } = authSlice.actions;
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;

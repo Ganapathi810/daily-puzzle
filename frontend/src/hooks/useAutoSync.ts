@@ -6,22 +6,17 @@ import type { RootState } from "../app/store"
 import { syncDailyScores } from "../lib/sync"
 
 export function useAutoSync() {
-
   const user = useSelector((state: RootState) => state.auth.user)
 
   useEffect(() => {
+    if (!user) return
 
-    
-
-    async function handleOnline() {
-      if (!user) return
-      await syncDailyScores(user.id)
+    const handleOnline = () => {
+      syncDailyScores(user.id)
     }
 
-    // Run once on mount if already online
     if (navigator.onLine) {
-      if (!user) return
-      syncDailyScores(user.id)
+      handleOnline()
     }
 
     window.addEventListener("online", handleOnline)
@@ -29,6 +24,5 @@ export function useAutoSync() {
     return () => {
       window.removeEventListener("online", handleOnline)
     }
-
-  }, [user])
+  }, [user?.id])
 }
