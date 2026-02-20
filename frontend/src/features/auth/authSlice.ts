@@ -23,7 +23,7 @@ interface AuthState {
 export const fetchUser = createAsyncThunk<
   { user: User | null; isGuest: boolean }
 >("auth/fetchUser", async () => {
-  const res = await fetch(`${SERVER_URL}/auth/me`, {
+  const res = await fetch(`/api/auth/me`, {
     credentials: "include",
   });
 
