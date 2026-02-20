@@ -15,13 +15,8 @@ export default function LoginPage() {
   const handleLoginAsGuest = async () => {
     localStorage.setItem("authMode", "guest");
     localStorage.setItem("guestId", crypto.randomUUID());
-    localStorage.setItem(
-    "guestCreatedAt",
-      new Date().toISOString()
-    );
-
-    await dispatch(fetchUser()); 
-
+    localStorage.setItem("guestCreatedAt", new Date().toISOString());
+    dispatch(fetchUser());
     navigate("/");
   };
 

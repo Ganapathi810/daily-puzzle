@@ -5,8 +5,6 @@ import type { RootState } from "../app/store";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { logout } from "../features/auth/authSlice";
 
-const BACKEND_URL =
-  import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
 /* ---------- Styled Components (no motion here) ---------- */
 
@@ -92,14 +90,6 @@ export const AvatarDropdown = () => {
   }, []);
 
   const handleLogout = async () => {
-    if (user) {
-      await fetch(`${BACKEND_URL}/auth/logout`, {
-        method: "POST",
-        credentials: "include",
-      });
-    }
-
-    localStorage.removeItem("authMode");
     dispatch(logout());
   };
 

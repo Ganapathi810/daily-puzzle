@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
 const SERVER_URL =import.meta.env.VITE_SERVER_URL;
 
@@ -6,6 +7,7 @@ const SERVER_URL =import.meta.env.VITE_SERVER_URL;
 
 export interface User {
   id: string;
+  name: string;
   email: string;
   streakCount: number;
   totalPoints: number;
@@ -23,18 +25,26 @@ interface AuthState {
 export const fetchUser = createAsyncThunk<
   { user: User | null; isGuest: boolean }
 >("auth/fetchUser", async () => {
-  const res = await fetch(`${SERVER_URL}/auth/me`, {
-    credentials: "include",
-  });
 
-  if (res.ok) {
-    const user = (await res.json()) as User;
-    return { user, isGuest: false };
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    try {
+
+      const res = await axios.get(`${SERVER_URL}/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    
+      const user = res.data as User;
+      return { user, isGuest: false };
+
+    } catch (error) {
+      console.error("fetchUser error:", error);
+      localStorage.removeItem("token");
+    }
   }
 
-  const isGuest =
-    localStorage.getItem("authMode") === "guest";
-
+  const isGuest = localStorage.getItem("authMode") === "guest";
   return { user: null, isGuest };
 });
 
@@ -52,12 +62,19 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    setToken: (_, action) => {
+      localStorage.setItem("token", action.payload);
+      // Optionally clear guest flags if any
+      localStorage.removeItem("authMode");
+      localStorage.removeItem("guestId");
+      localStorage.removeItem("guestCreatedAt");
+    },
     logout(state) {
       state.user = null;
       state.isGuest = false;
       state.loading = false;
 
-      // Clean guest mode if present
+      localStorage.removeItem("token");
       localStorage.removeItem("authMode");
       localStorage.removeItem("guestId");
       localStorage.removeItem("guestCreatedAt");
@@ -81,5 +98,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, setToken } = authSlice.actions;
 export default authSlice.reducer;

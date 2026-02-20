@@ -9,6 +9,7 @@ datasource db {
 
 model User {
   id           String       @id @default(uuid()) @db.Uuid
+  name         String
   email        String?      @unique
   authProvider AuthProvider
   streakCount  Int          @default(0)
@@ -39,13 +40,6 @@ model DailyScore {
   @@index([date, score(sort: Desc)])
 }
 
-model user_sessions {
-  sid    String   @id(map: "session_pkey") @db.VarChar
-  sess   Json     @db.Json
-  expire DateTime @db.Timestamp(6)
-
-  @@index([expire], map: "IDX_session_expire")
-}
 
 enum AuthProvider {
   google

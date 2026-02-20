@@ -39,6 +39,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ data, type }) => {
                   <LeaderboardRow
                     key={`${daily.userId}-${idx}`}
                     rank={idx + 1}
+                    name={daily.name}
                     email={daily.email}
                     score={daily.score}
                     time={daily.timeTaken}
@@ -51,6 +52,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ data, type }) => {
                   <LeaderboardRow
                     key={`${lifetime.userId}-${idx}`}
                     rank={idx + 1}
+                    name={lifetime.name}
                     email={lifetime.email}
                     score={lifetime.totalPoints}
                     time={null}

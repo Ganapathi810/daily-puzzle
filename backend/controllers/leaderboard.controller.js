@@ -22,6 +22,8 @@ export const getDailyScores = async (req, res) => {
             select: {
                 id: true,
                 email: true,
+                name: true,
+
             },
         });
 
@@ -30,14 +32,23 @@ export const getDailyScores = async (req, res) => {
             return {
                 ...item,
                 email: user?.email,
+                name: user?.name,
             };
         });
         
         const total = await prisma.dailyScore.count();
-        res.json({ data: result, total, page, limit });
+        res.json({
+          success: true,
+          data: result,
+          total,
+          page,
+          limit,
+        });
     } catch (error) {
         console.log("Server error: ", error);
-        res.status(500).json({ message: 'Failed to get daily scores' });
+        res.status(500).json({
+          success: false,
+          error: 'Failed to get daily scores' });
     }
 }
 
@@ -76,9 +87,17 @@ export const getLifetimeScores = async (req, res) => {
         })
         
         const total = await prisma.user.count();
-        res.json({ data: result, total, page, limit });
+        res.json({
+          success: true,
+          data: result,
+          total,
+          page,
+          limit,
+        });
     } catch (error) {
         console.log("Server error: ", error);
-        res.status(500).json({ message: 'Failed to get lifetime scores' });
+        res.status(500).json({
+          success: false,
+          error: 'Failed to get lifetime scores' });
     }
 }

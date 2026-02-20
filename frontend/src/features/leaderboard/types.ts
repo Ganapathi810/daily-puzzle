@@ -6,6 +6,7 @@ export interface User {
 
 export interface DailyScoreEntry {
   userId: string;
+  name: string;
   email: string;
   score: number;
   timeTaken: number; // in seconds
@@ -14,6 +15,7 @@ export interface DailyScoreEntry {
 
 export interface LifetimeScoreEntry {
   userId: string;
+  name: string;
   email: string;
   totalPoints: number;
   puzzlesSolved: number;

@@ -5,6 +5,7 @@ import { RankCell, UserCell, Avatar, ScoreCell, TimeCell, StatCell } from './Lea
 
 interface LeaderboardRowProps {
   rank: number;
+  name: string;
   email: string;
   score: number;
   time?: number | null;
@@ -15,6 +16,7 @@ interface LeaderboardRowProps {
 
 const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ 
   rank, 
+  name,
   email, 
   score, 
   time, 
@@ -37,7 +39,7 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
       </RankCell>
       <UserCell>
         <Avatar>{email.charAt(0).toUpperCase()}</Avatar>
-        {email}
+        {name}
       </UserCell>
       <ScoreCell>{score}</ScoreCell>
       {time !== undefined && time !== null ? (

@@ -1,5 +1,6 @@
 import axios from "axios"
 import { getUnsyncedDailyActivity, markEntriesAsSynced } from "../core/persistance/db"
+import { toast } from "react-toastify"
 
 let isSyncing = false
 
@@ -18,7 +19,7 @@ export async function syncDailyScores(userId: string) {
   try {
     isSyncing = true
 
-    await axios.post(`${SERVER_URL}/sync/daily-scores`, {
+    const response = await axios.post(`${SERVER_URL}/sync/daily-scores`, {
       entries: unsynced.map(entry => ({
         date: entry.date,
         score: entry.score,
@@ -28,11 +29,15 @@ export async function syncDailyScores(userId: string) {
         withCredentials: true
     })
 
-    await markEntriesAsSynced(unsynced)
+    if(response.data.success){
+      await markEntriesAsSynced(unsynced)
+    }
 
+    toast.success("Daily scores synced successfully")
 
   } catch (error) {
     console.error("Sync failed:", error)
+    toast.error("Failed to sync daily scores")
   } finally {
     isSyncing = false
   }
@@ -45,7 +50,7 @@ export async function syncUserStatsAndUser(totalPoints: number, puzzlesSolved: n
   try {
     isSyncing = true
 
-    await axios.post(`${SERVER_URL}/sync/user-stats-and-user`, {
+    const response = await axios.post(`${SERVER_URL}/sync/user-stats-and-user`, {
       totalPoints,
       puzzlesSolved,
       averageSolveTime,
@@ -53,8 +58,13 @@ export async function syncUserStatsAndUser(totalPoints: number, puzzlesSolved: n
         withCredentials: true
     })
 
+    if(response.data.success){
+      toast.success("User stats and user synced successfully")
+    }
+
   } catch (error) {
     console.error("Sync failed:", error)
+    toast.error("Failed to sync user stats and user")
   } finally {
     isSyncing = false
   }

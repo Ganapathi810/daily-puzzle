@@ -4,17 +4,16 @@ import { prisma } from "../prisma/client.js"
 export const syncDailyScores = async (req, res) => {
 console.log('inside sync controller')
   try {
-    const userId = req.session.userId 
+    const userId = req.userId 
     console.log("userid in sesson",userId)
     const { entries } = req.body
 
     if (!entries || !Array.isArray(entries)) {
       return res.status(400).json({
-        message: "Invalid payload"
+        success: false,
+        error: "Invalid payload"
       })
     }
-
-    const results = []
 
     for (const entry of entries) {
       const { date, score, timeTaken } = entry
@@ -23,7 +22,7 @@ console.log('inside sync controller')
         continue
       }
 
-      const upserted = await prisma.dailyScore.upsert({
+      await prisma.dailyScore.upsert({
         where: {
           userId_date: {
             userId,
@@ -42,30 +41,30 @@ console.log('inside sync controller')
         },
       })
 
-      results.push(upserted)
     }
 
     return res.status(200).json({
       success: true,
-      synced: results.length,
     })
 
   } catch (error) {
     console.error("Sync error:", error)
     return res.status(500).json({
-      message: "Failed to sync daily scores"
+      success: false,
+      error: "Failed to sync daily scores"
     })
   }
 }
 
 export const syncUserStatsAndUser = async (req, res) => {
   try {
-    const userId = req.session.userId 
+    const userId = req.userId 
     const { totalPoints, puzzlesSolved, averageSolveTime } = req.body
 
     if (!totalPoints || !puzzlesSolved || !averageSolveTime) {
       return res.status(400).json({
-        message: "Invalid payload"
+        success: false,
+        error: "Invalid payload"
       })
     }
 
@@ -100,7 +99,8 @@ export const syncUserStatsAndUser = async (req, res) => {
   } catch (error) {
     console.error("Sync error:", error)
     return res.status(500).json({
-      message: "Failed to sync user stats"
+      success: false,
+      error: "Failed to sync user stats"
     })
   }
 }
