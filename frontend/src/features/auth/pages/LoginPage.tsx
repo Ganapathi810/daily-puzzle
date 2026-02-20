@@ -2,14 +2,14 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../app/hooks";
 import { fetchUser } from "../authSlice";
 
-// const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const handleGoogleLogin = () => {
-    window.location.href = `/api/auth/google`;
+    window.location.href = `${SERVER_URL}/auth/google`;
   };
 
   const handleLoginAsGuest = async () => {

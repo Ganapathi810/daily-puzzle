@@ -55,8 +55,8 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // true in production (cookie is sent only over https), false in localhost (cookie is sent over http and https) to work locally as well
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // true in production (cookie is sent only over https), false in localhost (cookie is sent over http and https) to work locally as well
+      secure: true, // true in production (cookie is sent only over https), false in localhost (cookie is sent over http and https) to work locally as well
+      sameSite: 'lax', // true in production (cookie is sent only over https), false in localhost (cookie is sent over http and https) to work locally as well
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })

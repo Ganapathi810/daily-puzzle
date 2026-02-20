@@ -17,7 +17,7 @@ export const googleAuth = (req, res) => {
 
   const params = new URLSearchParams({
     client_id: process.env.GOOGLE_CLIENT_ID,
-    redirect_uri: process.env.NODE_ENV === 'production' ? process.env.GOOGLE_REDIRECT_URI : "http://localhost:3000/auth/google/callback",
+    redirect_uri: process.env.GOOGLE_REDIRECT_URI,
     response_type: 'code',
     scope: 'openid email profile',
     prompt: 'select_account',
@@ -58,7 +58,7 @@ export const googleCallback = async (req, res) => {
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
         code,
         grant_type: 'authorization_code',
-        redirect_uri: process.env.NODE_ENV === 'production' ? process.env.GOOGLE_REDIRECT_URI : "http://localhost:3000/auth/google/callback",
+        redirect_uri: process.env.GOOGLE_REDIRECT_URI,
       },
       {
         headers: { 'Content-Type': 'application/json' },
@@ -91,6 +91,7 @@ export const googleCallback = async (req, res) => {
 
 
     if (!email) {
+      console.error("Email does not exists")
       return res.redirect(`${process.env.CLIENT_URL}/login`)
     }
 
@@ -125,7 +126,7 @@ export const googleCallback = async (req, res) => {
           return res.redirect(`${process.env.CLIENT_URL}/login`)
         }
 
-        console.log("User ID in session (after save):", req.session.userId)
+        console.log("User ID in session (after save) in regenerate:", req.session.userId)
         return res.redirect(`${process.env.CLIENT_URL}/`)
       })
     })
@@ -147,8 +148,8 @@ export const getMe = async (req, res) => {
   }
 
   try {
-    console.log("Session ID:", req.sessionID);
-    console.log("User ID in session:", req.session.userId);
+    console.log("Session ID: in getme", req.sessionID);
+    console.log("User ID in session: in get me", req.session.userId);
 
     if (!req.session.userId) {
       console.log("No userId in session. Sending 401.");
@@ -190,8 +191,8 @@ export const logout = (req, res) => {
   if (err) return res.status(500).json({ error: "Logout failed" })
   res.clearCookie('dailypuzzle.sid', {
     httpOnly: true,
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production'
+    sameSite: 'none',
+    secure: true
   })
   res.sendStatus(200)
 })

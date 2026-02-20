@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-// const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'
 
 export function useAuth() {
   const [loading, setLoading] = useState(true)
@@ -10,7 +10,7 @@ export function useAuth() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await fetch(`/api/auth/me`, {
+        const res = await fetch(`${BACKEND_URL}/auth/me`, {
           credentials: 'include',
         })
 

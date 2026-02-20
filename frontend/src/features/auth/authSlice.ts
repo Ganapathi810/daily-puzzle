@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+const SERVER_URL =import.meta.env.VITE_SERVER_URL;
 
 /* ---------- Types ---------- */
 
@@ -23,7 +23,7 @@ interface AuthState {
 export const fetchUser = createAsyncThunk<
   { user: User | null; isGuest: boolean }
 >("auth/fetchUser", async () => {
-  const res = await fetch(`/api/auth/me`, {
+  const res = await fetch(`${SERVER_URL}/auth/me`, {
     credentials: "include",
   });
 
