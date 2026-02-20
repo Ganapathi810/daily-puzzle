@@ -466,7 +466,7 @@ export default function SudokuBoard({ puzzle }: Props) {
     const score = calculateScore(elapsedTime, hintsUsed, sudokuPuzzle.difficulty as DifficultyLevel);
 
     if (!user) {
-      alert("As you are guest, you cannot save your score. Please log in.");
+      alert("🎉 Sudoku Completed, But as you are guest, you cannot save your score. Please log in.");
       return;
     }
     const record: DailyActivity = {
