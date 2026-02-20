@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { DailyScoreEntry, LifetimeScoreEntry, PaginatedResponse } from './types';
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000/';
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 
 export const fetchDailyScores = async (page = 1, limit = 20): Promise<PaginatedResponse<DailyScoreEntry>> => {
