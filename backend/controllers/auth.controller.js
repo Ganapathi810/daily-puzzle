@@ -117,8 +117,9 @@ export const googleCallback = async (req, res) => {
         console.error("Session regeneration error:", err)
         return res.redirect(`${process.env.CLIENT_URL}/login`)
       }
-
+      console.log('New session ID after regenerate:', req.sessionID);
       req.session.userId = user.id
+      console.log('Session full object data before save:', req.session)
 
       req.session.save((err) => {
         if (err) {
@@ -150,6 +151,7 @@ export const getMe = async (req, res) => {
   try {
     console.log("Session ID: in getme", req.sessionID);
     console.log("User ID in session: in get me", req.session.userId);
+console.log('Full session object in getMe:', req.session);
 
     if (!req.session.userId) {
       console.log("No userId in session. Sending 401.");
