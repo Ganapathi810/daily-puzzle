@@ -56,7 +56,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: true, // true in production (cookie is sent only over https), false in localhost (cookie is sent over http and https) to work locally as well
-      sameSite: 'lax', // true in production (cookie is sent only over https), false in localhost (cookie is sent over http and https) to work locally as well
+      sameSite: 'none', // true in production (cookie is sent only over https), false in localhost (cookie is sent over http and https) to work locally as well
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })
