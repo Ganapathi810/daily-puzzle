@@ -9,7 +9,7 @@ export default function LoginPage() {
   const dispatch = useAppDispatch();
 
   const handleGoogleLogin = () => {
-    window.location.href = `${SERVER_URL}/auth/google`;
+    window.location.href = `/api/auth/google`;
   };
 
   const handleLoginAsGuest = async () => {
