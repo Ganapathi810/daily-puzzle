@@ -1,9 +1,5 @@
 {
     "rewrites": [
-        { "source": "/(.*)", "destination": "/" },
-        {
-            "source": "/api/(.*)",
-            "destination": "https://daily-puzzle-brqk.onrender.com/$1"
-        }
+        { "source": "/(.*)", "destination": "/" }
     ]
 }
