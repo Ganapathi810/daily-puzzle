@@ -17,7 +17,7 @@ export const googleAuth = (req, res) => {
 
   const params = new URLSearchParams({
     client_id: process.env.GOOGLE_CLIENT_ID,
-    redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+    redirect_uri: process.env.NODE_ENV === 'production' ? process.env.GOOGLE_REDIRECT_URI : "http://localhost:3000/auth/google/callback",
     response_type: 'code',
     scope: 'openid email profile',
     prompt: 'select_account',
@@ -58,7 +58,7 @@ export const googleCallback = async (req, res) => {
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
         code,
         grant_type: 'authorization_code',
-        redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+        redirect_uri: process.env.NODE_ENV === 'production' ? process.env.GOOGLE_REDIRECT_URI : "http://localhost:3000/auth/google/callback",
       },
       {
         headers: { 'Content-Type': 'application/json' },
@@ -118,9 +118,16 @@ export const googleCallback = async (req, res) => {
       }
 
       req.session.userId = user.id
-      console.log("User ID in session: in google callback", req.session.userId)
 
-      return res.redirect(`${process.env.CLIENT_URL}/`)
+      req.session.save((err) => {
+        if (err) {
+          console.error("Session save error:", err)
+          return res.redirect(`${process.env.CLIENT_URL}/login`)
+        }
+
+        console.log("User ID in session (after save):", req.session.userId)
+        return res.redirect(`${process.env.CLIENT_URL}/`)
+      })
     })
   } catch (err) {
     console.error('Google OAuth Error:', err)
