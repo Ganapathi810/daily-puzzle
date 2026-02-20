@@ -13,6 +13,8 @@ import pkg from 'pg'
 const app = express()
 const PORT = process.env.PORT || 3000
 
+app.set('trust proxy', 1)
+
 const { Pool } = pkg;
 
 const PostgresStore = pgSession(session);
@@ -31,10 +33,9 @@ pool.on('error', (err, client) => {
 console.log(process.env.CLIENT_URL)
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: process.env.CLIENT_URL,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
   })
 )
 
@@ -54,7 +55,7 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: true, // true in prod
+      secure: process.env.NODE_ENV === 'production', // true in production (cookie is sent only over https), false in localhost (cookie is sent over http and https) to work locally as well
       sameSite: 'lax',
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },

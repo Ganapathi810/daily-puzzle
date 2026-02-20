@@ -9,6 +9,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
  * STEP 1: Redirect to Google with CSRF state
  */
 export const googleAuth = (req, res) => {
+  console.log('inside googleAuth =======================================')
   const state = crypto.randomBytes(16).toString('hex')
 
   // Store state in session (CSRF protection)
@@ -32,6 +33,7 @@ export const googleAuth = (req, res) => {
  * STEP 2: Google callback
  */
 export const googleCallback = async (req, res) => {
+  console.log("inside googleCallback =======================================")
   try {
     const { code, state } = req.query
 
@@ -74,7 +76,19 @@ export const googleCallback = async (req, res) => {
     })
 
     const payload = ticket.getPayload()
+
+    if (!payload.email_verified) {
+      console.error("Email not verified")
+      return res.redirect(`${process.env.CLIENT_URL}/login`)
+    }
+
     const email = payload.email
+    const name = payload.name
+    const givenName = payload.given_name
+    const familyName = payload.family_name
+    const picture = payload.picture
+    console.log(name, givenName, familyName, picture)
+
 
     if (!email) {
       return res.redirect(`${process.env.CLIENT_URL}/login`)
@@ -96,12 +110,18 @@ export const googleCallback = async (req, res) => {
       })
     }
 
-    /**
-     * Create session
-     */
-    req.session.userId = user.id
 
-    res.redirect(`${process.env.CLIENT_URL}/`)
+    req.session.regenerate((err) => {
+      if (err) {
+        console.error("Session regeneration error:", err)
+        return res.redirect(`${process.env.CLIENT_URL}/login`)
+      }
+
+      req.session.userId = user.id
+      console.log("User ID in session: in google callback", req.session.userId)
+
+      return res.redirect(`${process.env.CLIENT_URL}/`)
+    })
   } catch (err) {
     console.error('Google OAuth Error:', err)
     res.redirect(`${process.env.CLIENT_URL}/login`)
@@ -112,7 +132,7 @@ export const googleCallback = async (req, res) => {
  * Get current logged-in user
  */
 export const getMe = async (req, res) => {
-  console.log("inside getMe")
+  console.log("inside getMe ============================================")
   
   if (!req.session) {
     console.error("Session object is missing on request! Session middleware failure?");
@@ -159,8 +179,13 @@ export const getMe = async (req, res) => {
  * Logout
  */
 export const logout = (req, res) => {
-  req.session.destroy(() => {
-    res.clearCookie('dailypuzzle.sid')
-    res.sendStatus(200)
+  req.session.destroy(err => {
+  if (err) return res.status(500).json({ error: "Logout failed" })
+  res.clearCookie('dailypuzzle.sid', {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production'
   })
+  res.sendStatus(200)
+})
 }
