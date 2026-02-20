@@ -1,14 +1,15 @@
 
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import { fetchUser } from '../authSlice';
-import { useAppDispatch } from '../../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 
 export default function OAuthCallback() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-
+  const { loading } = useAppSelector((state) => state.auth);
+  
   useEffect(() => {
 
     const hash = window.location.hash.substring(1); // remove '#'
@@ -17,11 +18,16 @@ export default function OAuthCallback() {
 
     if (token) {
       dispatch(fetchUser());
-      navigate('/');
     } else {
       navigate('/login');
     }
   }, [navigate]);
 
-  return <LoadingSpinner />
+  if(loading) {
+    return <div className='flex h-screen w-screen items-center justify-center'>
+      <LoadingSpinner />
+    </div>
+  }
+
+  return <Navigate to="/" replace />
 }
