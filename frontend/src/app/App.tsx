@@ -1,11 +1,13 @@
 import { useEffect } from "react";
-import { useAppDispatch } from "./hooks";
+import { useAppDispatch, useAppSelector } from "./hooks";
 import { fetchUser } from "../features/auth/authSlice";
 import AppRouter from "./router";
 import { useAutoSync } from "../hooks/useAutoSync";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function App() {
   const dispatch = useAppDispatch();
+  const { loading } = useAppSelector((state) => state.auth);
 
   useAutoSync()
 
@@ -16,6 +18,10 @@ function App() {
       dispatch(fetchUser());
     }
   }, []);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return <AppRouter />;
 }
