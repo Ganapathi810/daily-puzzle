@@ -18,7 +18,7 @@ export function useAchievements(
     }
 
     run()
-  }, [bestStreak])
+  }, [bestStreak, userId])
 
   return achievements
 }
