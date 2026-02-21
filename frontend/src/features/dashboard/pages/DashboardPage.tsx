@@ -76,7 +76,7 @@ export default function Dashboard() {
       if(totalPoints === 0 || puzzlesSolved === 0 || averageSolveTime === 0) return
       syncUserStatsAndUser(totalPoints, puzzlesSolved, averageSolveTime)
     }
-  }, [dailyActivity, loading, totalPoints, puzzlesSolved, averageSolveTime])
+  }, [dailyActivity, loading, totalPoints, puzzlesSolved, averageSolveTime,])
 
   if (loading) {
     return (
