@@ -17,7 +17,7 @@ export default function AchievementSection({
       </h2>
 
       <div>
-        {earnedIds.length === 0 ? (
+        {true? (
           <div className="flex items-center justify-center h-20 sm:h-32 max-w-xl bg-[#03162c] rounded">
             <p className="text-neutral-400">No badges earned yet</p>
           </div>

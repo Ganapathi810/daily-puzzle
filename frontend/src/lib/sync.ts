@@ -7,10 +7,13 @@ let isSyncing = false
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 export async function syncDailyScores(userId: string) {
+  console.log("Syncing daily scores")
 
   if (isSyncing) return
   if (!navigator.onLine) return
   if(!userId) return
+
+  console.log("navigator.onLine in syncDailyScores")
 
   const unsynced = await getUnsyncedDailyActivity(userId)
 
@@ -44,8 +47,11 @@ export async function syncDailyScores(userId: string) {
 }
 
 export async function syncUserStatsAndUser(totalPoints: number, puzzlesSolved: number, averageSolveTime: number) {
+  console.log("Syncing user stats and user")
   if (isSyncing) return
   if (!navigator.onLine) return
+
+  console.log("navigator.onLine in syncUserStatsAndUser")
 
   try {
     isSyncing = true
@@ -59,6 +65,7 @@ export async function syncUserStatsAndUser(totalPoints: number, puzzlesSolved: n
     })
 
     if(response.data.success){
+      console.log("User stats and user synced successfully")
       toast.success("User stats and user synced successfully")
     }
 
