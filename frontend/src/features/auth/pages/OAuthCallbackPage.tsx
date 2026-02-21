@@ -21,11 +21,11 @@ export default function OAuthCallback() {
     } else {
       navigate('/login');
     }
-  }, [navigate]);
+  }, []);
 
   if(loading) {
     return <div className='flex h-screen w-screen items-center justify-center'>
-      <LoadingSpinner />
+      <LoadingSpinner text="loading user..."/>
     </div>
   }
 

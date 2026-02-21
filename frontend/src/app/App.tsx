@@ -1,27 +1,24 @@
-import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "./hooks";
-import { fetchUser } from "../features/auth/authSlice";
+import { useAppSelector } from "./hooks";
 import AppRouter from "./router";
 import { useAutoSync } from "../hooks/useAutoSync";
-import LoadingSpinner from "../components/LoadingSpinner";
 
 function App() {
-  const dispatch = useAppDispatch();
-  const { loading } = useAppSelector((state) => state.auth);
+  // const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.auth);
 
-  useAutoSync()
+  if(user) useAutoSync()
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
 
-    if (token) {
-      dispatch(fetchUser());
-    }
-  }, []);
+  //   if (token) {
+  //     dispatch(fetchUser());
+  //   }
+  // }, []);
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+  // if (loading) {
+  //   return <LoadingSpinner />;
+  // }
 
   return <AppRouter />;
 }
