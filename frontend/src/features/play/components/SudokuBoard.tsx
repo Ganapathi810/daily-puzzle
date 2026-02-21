@@ -445,7 +445,12 @@ export default function SudokuBoard({ puzzle }: Props) {
   /* ---------------- Submit with Score Calculation ---------------- */
 
   async function handleSubmit() {
-    if (completed) return;
+    
+    if (completed) {
+      alert("You have already completed this puzzle, navigating to dashboard");
+      navigate('/');
+      return;
+    } 
 
     const solution = sudokuPuzzle.solution;
     console.log(solution)
