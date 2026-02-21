@@ -1,12 +1,10 @@
-import { useAppSelector } from "./hooks";
 import AppRouter from "./router";
 import { useAutoSync } from "../hooks/useAutoSync";
 
 function App() {
   // const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state) => state.auth);
 
-  if(user) useAutoSync()
+  useAutoSync()
 
   // useEffect(() => {
   //   const token = localStorage.getItem("token");
