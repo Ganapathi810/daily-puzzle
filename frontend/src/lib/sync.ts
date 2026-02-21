@@ -28,6 +28,10 @@ export async function syncDailyScores(userId: string) {
         score: entry.score,
         timeTaken: entry.timeTaken,
       })),
+    },{
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
     })
 
     if(response.data.success){
@@ -58,6 +62,10 @@ export async function syncUserStatsAndUser(totalPoints: number, puzzlesSolved: n
       totalPoints,
       puzzlesSolved,
       averageSolveTime,
+    }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
     })
 
     if(response.data.success){
