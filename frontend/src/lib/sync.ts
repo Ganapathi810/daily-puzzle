@@ -1,6 +1,7 @@
 import axios from "axios"
-import { getUnsyncedDailyActivity, markEntriesAsSynced } from "../core/persistance/db"
+import { getUnsyncedDailyActivity, markEntriesAsSynced, getAllDailyActivity } from "../core/persistance/db"
 import { toast } from "react-toastify"
+import { calculateDashboardMetrics } from "../features/dashboard/lib"
 
 let isSyncing = false
 
@@ -36,6 +37,17 @@ export async function syncDailyScores(userId: string) {
 
     if(response.data.success){
       await markEntriesAsSynced(unsynced)
+      
+      // Update user stats and user after successful daily scores sync
+      const allActivity = await getAllDailyActivity(userId)
+      const { totalPoints, puzzlesSolved, averageSolveTime } = calculateDashboardMetrics(allActivity)
+      
+      if (totalPoints > 0 || puzzlesSolved > 0 || averageSolveTime > 0) {
+        // We set isSyncing to false temporarily to allow syncUserStatsAndUser to run
+        isSyncing = false 
+        await syncUserStatsAndUser(totalPoints, puzzlesSolved, averageSolveTime)
+        isSyncing = true
+      }
     }
 
     toast.success("Daily scores synced successfully")

@@ -12,15 +12,13 @@ import { Trophy } from "lucide-react"
 import { MetricCard } from "../components/MetricCard"
 import { useNavigate } from "react-router-dom"
 import { getColor } from "../lib"
-import { useEffect } from "react"
-import { syncUserStatsAndUser } from "../../../lib/sync"
 import type { DailyActivity } from "../types"
 import { useAppSelector } from "../../../app/hooks"
 
 export default function Dashboard() {
   const currentYear = dayjs().year()
   const navigate = useNavigate()
-  const { user,isGuest } = useAppSelector((state) => state.auth)
+  const { user } = useAppSelector((state) => state.auth)
 
   const { dailyActivity, loading } = useDailyActivity()
   const { currentStreak, bestStreak } = useStreak(dailyActivity)
@@ -70,13 +68,6 @@ export default function Dashboard() {
     }
   ]
 
-  useEffect(() => {
-    if (!loading) {
-      if (isGuest) return
-      if(totalPoints === 0 || puzzlesSolved === 0 || averageSolveTime === 0) return
-      syncUserStatsAndUser(totalPoints, puzzlesSolved, averageSolveTime)
-    }
-  }, [dailyActivity, loading, totalPoints, puzzlesSolved, averageSolveTime,])
 
   if (loading) {
     return (
