@@ -16,7 +16,10 @@ export default function OAuthCallback() {
     const params = new URLSearchParams(hash);
     const token = params.get('token');
 
+    console.log("token in oauthCallback: ",token)
+
     if (token) {
+      localStorage.setItem("token", token);
       dispatch(fetchUser());
     } else {
       navigate('/login');
