@@ -93,7 +93,10 @@ export default function Dashboard() {
 
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-xl sm:text-2xl font-bold">
+        <div className="text-2xl font-bold text-white mb-2">
+          {user?.name ? <span className="flex flex-wrap items-center gap-2">Hey <span className="text-(--bg-surface)">${user.name}</span>, welcome back!</span> : <span className="flex flex-wrap items-center gap-2">Welcome back, <span className="text-(--bg-surface)">Guest! how are you</span></span>}
+        </div>
+        <h1 className="text-xl sm:text-2xl font-bold text-white">
           Dashboard
         </h1>
         <p className="text-neutral-400 text-sm mt-1">
