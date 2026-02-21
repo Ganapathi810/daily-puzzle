@@ -35,7 +35,7 @@ export const fetchUser = createAsyncThunk<
         headers: { Authorization: `Bearer ${token}` }
       });
     
-      const user = res.data as User;
+      const user = res.data.data as User;
       return { user, isGuest: false };
 
     } catch (error) {
