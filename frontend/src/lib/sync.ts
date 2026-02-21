@@ -28,8 +28,6 @@ export async function syncDailyScores(userId: string) {
         score: entry.score,
         timeTaken: entry.timeTaken,
       })),
-    }, {
-        withCredentials: true
     })
 
     if(response.data.success){
@@ -60,8 +58,6 @@ export async function syncUserStatsAndUser(totalPoints: number, puzzlesSolved: n
       totalPoints,
       puzzlesSolved,
       averageSolveTime,
-    }, {
-        withCredentials: true
     })
 
     if(response.data.success){
