@@ -1,3 +1,9 @@
+<h1>
+  <img src="./frontend/public/favicon.ico" alt="Shortly Logo" width="32" style="margin-right: 10px;">
+  Daily Puzzle
+</h1>
+
+
 **Daily Puzzle** is a logic-based puzzle game designed to improve critical thinking and consistency. Users solve one unique puzzle every day, track their progress, maintain streaks, and compete on leaderboards — all with offline-first support and backend synchronization.
 
 ---
