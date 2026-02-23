@@ -453,7 +453,6 @@ export default function SudokuBoard({ puzzle }: Props) {
     } 
 
     const solution = sudokuPuzzle.solution;
-    console.log(solution)
     const isCorrect = solution.every((row, r) =>
       row.every((value, c) => value === grid[r][c])
     );

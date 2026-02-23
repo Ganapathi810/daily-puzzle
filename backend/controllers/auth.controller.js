@@ -10,7 +10,6 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
  * STEP 1: Redirect to Google with CSRF state
  */
 export const googleAuth = (req, res) => {
-  console.log('inside googleAuth =======================================')
   const state = crypto.randomBytes(16).toString('hex')
 
     res.cookie('oauthState', state, {
@@ -39,7 +38,6 @@ export const googleAuth = (req, res) => {
  * STEP 2: Google callback
  */
 export const googleCallback = async (req, res) => {
-  console.log("inside googleCallback =======================================")
   try {
     const { code, state } = req.query
 

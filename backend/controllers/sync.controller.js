@@ -2,10 +2,8 @@
 import { prisma } from "../prisma/client.js"
 
 export const syncDailyScores = async (req, res) => {
-console.log('inside sync controller')
   try {
     const userId = req.userId 
-    console.log("userid in sesson",userId)
     const { entries } = req.body
 
     if (!entries || !Array.isArray(entries)) {

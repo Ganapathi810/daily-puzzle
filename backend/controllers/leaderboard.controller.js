@@ -45,7 +45,6 @@ export const getDailyScores = async (req, res) => {
           limit,
         });
     } catch (error) {
-        console.log("Server error: ", error);
         res.status(500).json({
           success: false,
           error: 'Failed to get daily scores' });
@@ -95,7 +94,6 @@ export const getLifetimeScores = async (req, res) => {
           limit,
         });
     } catch (error) {
-        console.log("Server error: ", error);
         res.status(500).json({
           success: false,
           error: 'Failed to get lifetime scores' });
