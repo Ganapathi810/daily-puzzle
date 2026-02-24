@@ -1,8 +1,5 @@
 import dayjs from "dayjs";
 
-// IMPORTANT: Replace this secret key with your own.
-// In a client‑side app, the key is visible, but it still prevents casual prediction.
-// For production, consider generating seeds on a server and sending them to the client.
 const SECRET_KEY = "your-secret-key-change-this";
 
 export async function generateDailySeed(date?: dayjs.Dayjs): Promise<number> {
