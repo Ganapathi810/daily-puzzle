@@ -19,7 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { calculateScore } from "../lib";
 import type { DifficultyLevel } from "../types";
 
-const MAX_HINTS_PER_DAY = 90; // configurable
+const MAX_HINTS_PER_DAY = 5; // configurable
 
 
 /* ---------------- Component ---------------- */
