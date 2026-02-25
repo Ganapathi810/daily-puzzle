@@ -3,7 +3,7 @@ import SudokuBoard from "./components/SudokuBoard";
 
 interface Props {
     puzzle: BasePuzzle<any, any>;
-  }
+}
   
   export default function PuzzleRenderer({ puzzle }: Props) {
     switch (puzzle.type) {

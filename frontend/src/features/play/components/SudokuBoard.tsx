@@ -19,7 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { calculateScore } from "../lib";
 import type { DifficultyLevel } from "../types";
 
-const MAX_HINTS_PER_DAY = 5; // configurable
+const MAX_HINTS_PER_DAY = 90; // configurable
 
 
 /* ---------------- Component ---------------- */
@@ -57,6 +57,12 @@ export default function SudokuBoard({ puzzle }: Props) {
   );
   const [completed, setCompleted] = useState(false);
   const [hintsUsed, setHintsUsed] = useState(0);
+  const [revealingCell, setRevealingCell] = useState<{ row: number; col: number } | null>(null);
+
+  const playHintSound = useCallback(() => {
+    const audio = new Audio("https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"); // A nice "ping" sound
+    audio.play().catch(err => console.error("Error playing sound:", err));
+  }, []);
 
   /* ---------------- Load Progress ---------------- */
 
@@ -136,6 +142,17 @@ export default function SudokuBoard({ puzzle }: Props) {
     }
     autoSave();
   }, [grid, elapsedTime, completed, hintsUsed, today, sudokuPuzzle.id, loading]);
+
+  /* ---------------- Animation Clear ---------------- */
+
+  useEffect(() => {
+    if (revealingCell) {
+      const timer = setTimeout(() => {
+        setRevealingCell(null);
+      }, 2000); // Highlight for 2 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [revealingCell]);
 
   /* ---------------- Candidate Generation ---------------- */
 
@@ -389,6 +406,7 @@ export default function SudokuBoard({ puzzle }: Props) {
 
   /* ---------------- Main Hint Handler ---------------- */
 
+  /* ---------------- Main Hint Handler ---------------- */
   const handleHint = useCallback(() => {
     if (completed || !isPlaying || isPaused) {
       alert("You can only use hints while playing.");
@@ -400,9 +418,31 @@ export default function SudokuBoard({ puzzle }: Props) {
       return;
     }
 
-    const candidates = computeCandidates();
+    const solution = sudokuPuzzle.solution;
 
-    // Ordered from simplest to most complex
+    // 1. Priority: Check for Incorrect Entries
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        const userValue = grid[r][c];
+        const correctValue = solution[r][c];
+        const isOriginalFixed = sudokuPuzzle.data.grid[r][c] !== null;
+
+        if (userValue !== null && !isOriginalFixed && userValue !== correctValue) {
+          // Reveal the correct value for this cell
+          const newGrid = grid.map(row => [...row]);
+          newGrid[r][c] = correctValue;
+          setGrid(newGrid);
+          setHintsUsed(prev => prev + 1);
+          setRevealingCell({ row: r, col: c });
+          playHintSound();
+          alert(`💡 Hint: Cell (row ${r+1}, col ${c+1}) was incorrect. The correct digit is ${correctValue}. (${hintsUsed+1}/${MAX_HINTS_PER_DAY} used)`);
+          return;
+        }
+      }
+    }
+
+    // 2. Priority: Logical Hints
+    const candidates = computeCandidates();
     const fullHouse = findFullHouse();
     if (fullHouse) {
       setHintsUsed(prev => prev + 1);
@@ -438,9 +478,42 @@ export default function SudokuBoard({ puzzle }: Props) {
       return;
     }
 
-    // No hint found
-    alert("No hint available for the current position. Try looking for more complex patterns (X-Wing, Swordfish, etc.) or continue solving.");
-  }, [completed, isPlaying, isPaused, hintsUsed, computeCandidates, findFullHouse, findNakedSingle, findHiddenSingle, findNakedPair, findHiddenPair]);
+    // 3. Priority: Reveal Fallback (Fill an empty cell)
+    // Try currently selected cell if empty, otherwise find first empty
+    let revealRow = -1;
+    let revealCol = -1;
+
+    if (selected && grid[selected.row][selected.col] === null) {
+      revealRow = selected.row;
+      revealCol = selected.col;
+    } else {
+      for (let r = 0; r < 9; r++) {
+        for (let c = 0; c < 9; c++) {
+          if (grid[r][c] === null) {
+            revealRow = r;
+            revealCol = c;
+            break;
+          }
+        }
+        if (revealRow !== -1) break;
+      }
+    }
+
+    if (revealRow !== -1) {
+      const correctValue = solution[revealRow][revealCol];
+      const newGrid = grid.map(row => [...row]);
+      newGrid[revealRow][revealCol] = correctValue;
+      setGrid(newGrid);
+      setHintsUsed(prev => prev + 1);
+      setRevealingCell({ row: revealRow, col: revealCol });
+      playHintSound();
+      alert(`💡 Hint: Revealing a cell: Cell (row ${revealRow+1}, col ${revealCol+1}) is ${correctValue}. (${hintsUsed+1}/${MAX_HINTS_PER_DAY} used)`);
+      return;
+    }
+
+    // No hint found (should not happen if game is not complete)
+    alert("No hint available. You may have already completed the puzzle!");
+  }, [completed, isPlaying, isPaused, hintsUsed, grid, sudokuPuzzle, selected, computeCandidates, findFullHouse, findNakedSingle, findHiddenSingle, findNakedPair, findHiddenPair]);
 
   /* ---------------- Submit with Score Calculation ---------------- */
 
@@ -601,7 +674,7 @@ export default function SudokuBoard({ puzzle }: Props) {
                     {!isPlaying ? (
                       <button
                         onClick={startGame}
-                        className="px-6 py-2 bg-green-600 text-white rounded-lg"
+                        className="cursor-pointer px-6 py-2 bg-green-600 text-white rounded-lg"
                       >
                         ▶ Play
                       </button>
@@ -618,14 +691,22 @@ export default function SudokuBoard({ puzzle }: Props) {
 
                 {grid.map((row, r) =>
                   row.map((cell, c) => {
-                    const isFixed = sudokuPuzzle.data.grid[r][c] !== null;
+                    const isRevealing = revealingCell?.row === r && revealingCell?.col === c;
                     const isSelected = selected?.row === r && selected?.col === c;
+                    const isFixed = sudokuPuzzle.data.grid[r][c] !== null;
+
+                    // Thicker lines for 3x3 boundaries (after index 2 and 5)
+                    const isSubgridRight = c === 2 || c === 5;
+                    const isSubgridBottom = r === 2 || r === 5;
 
                     return (
                       <Cell
                         key={`${r}-${c}`}
                         selected={isSelected}
                         isFixed={isFixed}
+                        isRevealing={isRevealing}
+                        isSubgridRight={isSubgridRight}
+                        isSubgridBottom={isSubgridBottom}
                         onClick={() => {
                           if (!isFixed && isPlaying && !isPaused && !completed) {
                             setSelected({ row: r, col: c });
